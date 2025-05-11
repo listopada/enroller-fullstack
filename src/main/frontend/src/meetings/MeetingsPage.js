@@ -34,6 +34,7 @@ export default function MeetingsPage({username}) {
         }
     }
 
+
     async function handleDeleteMeeting(meeting) {
         const response = await fetch(`/api/meetings/${meeting.id}`, {
             method: 'DELETE'
