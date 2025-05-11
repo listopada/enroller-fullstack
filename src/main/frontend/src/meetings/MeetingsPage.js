@@ -23,16 +23,26 @@ export default function MeetingsPage({username}) {
             body: JSON.stringify(meeting),
             headers: { 'Content-Type': 'application/json' }
         });
+
         if (response.ok) {
-            const nextMeetings = [...meetings, meeting];
-            setMeetings(nextMeetings);
+            const updatedList = await fetch('/api/meetings');
+            if (updatedList.ok) {
+                const meetings = await updatedList.json();
+                setMeetings(meetings);
+            }
             setAddingNewMeeting(false);
         }
     }
 
-    function handleDeleteMeeting(meeting) {
-        const nextMeetings = meetings.filter(m => m !== meeting);
-        setMeetings(nextMeetings);
+    async function handleDeleteMeeting(meeting) {
+        const response = await fetch(`/api/meetings/${meeting.id}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            const nextMeetings = meetings.filter(m => m.id !== meeting.id);
+            setMeetings(nextMeetings);
+        }
     }
 
     return (
