@@ -50,10 +50,11 @@ public class MeetingService {
         transaction.commit();
     }
 
-    public void add(Meeting meeting) {
+    public Meeting add(Meeting meeting) {
         Transaction transaction = this.session.beginTransaction();
         this.session.save(meeting);
         transaction.commit();
+        return meeting;
     }
 
     public void update(Meeting meeting) {
