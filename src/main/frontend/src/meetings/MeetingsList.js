@@ -33,16 +33,20 @@ export default function MeetingsList({ meetings, username, onDelete, onSignOut, 
                         <td>
                             {
                                 editingIndex === index
-                                    ? <input value={editedMeeting.title}
-                                             onChange={(e) => setEditedMeeting({...editedMeeting, title: e.target.value})} />
+                                    ? <input
+                                        value={editedMeeting.title}
+                                        onChange={(e) => setEditedMeeting({ ...editedMeeting, title: e.target.value })}
+                                    />
                                     : meeting.title
                             }
                         </td>
                         <td>
                             {
                                 editingIndex === index
-                                    ? <input value={editedMeeting.description}
-                                             onChange={(e) => setEditedMeeting({...editedMeeting, description: e.target.value})} />
+                                    ? <input
+                                        value={editedMeeting.description}
+                                        onChange={(e) => setEditedMeeting({ ...editedMeeting, description: e.target.value })}
+                                    />
                                     : meeting.description
                             }
                         </td>
@@ -58,11 +62,8 @@ export default function MeetingsList({ meetings, username, onDelete, onSignOut, 
                             {
                                 editingIndex === index ? (
                                     <>
-                                        <>
-                                            <button onClick={handleSave} className="meeting-button">Zapisz</button>
-                                            <button onClick={() => setEditingIndex(null)}>Anuluj</button>
-                                        </>
-
+                                        <button onClick={handleSave} className="meeting-button">Zapisz</button>
+                                        <button onClick={() => setEditingIndex(null)}>Anuluj</button>
                                     </>
                                 ) : (
                                     <MeetingButtons

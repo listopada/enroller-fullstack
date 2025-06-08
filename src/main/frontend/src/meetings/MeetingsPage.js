@@ -1,15 +1,20 @@
-import {useState} from "react";
+import { useState } from "react";
 import NewMeetingForm from "./NewMeetingForm";
 import MeetingsList from "./MeetingsList";
 
-export default function MeetingsPage({username}) {
+export default function MeetingsPage({ username }) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     function handleNewMeeting(meeting) {
-        const nextMeetings = [...meetings, meeting];
-        setMeetings(nextMeetings);
-        setAddingNewMeeting(false);
+        setLoading(true);
+        setTimeout(() => {
+            const nextMeetings = [...meetings, meeting];
+            setMeetings(nextMeetings);
+            setAddingNewMeeting(false);
+            setLoading(false);
+        }, 1000);
     }
 
     function handleDeleteMeeting(meeting) {
@@ -18,23 +23,31 @@ export default function MeetingsPage({username}) {
     }
 
     function handleSignIn(meeting) {
-        const nextMeetings = meetings.map(m => {
-            if (m === meeting) {
-                m.participants = [...m.participants, username];
-            }
-            return m;
-        });
-        setMeetings(nextMeetings);
+        setLoading(true);
+        setTimeout(() => {
+            const nextMeetings = meetings.map(m => {
+                if (m === meeting) {
+                    m.participants = [...m.participants, username];
+                }
+                return m;
+            });
+            setMeetings(nextMeetings);
+            setLoading(false);
+        }, 1000);
     }
 
     function handleSignOut(meeting) {
-        const nextMeetings = meetings.map(m => {
-            if (m === meeting) {
-                m.participants = m.participants.filter(u => u !== username);
-            }
-            return m;
-        });
-        setMeetings(nextMeetings);
+        setLoading(true);
+        setTimeout(() => {
+            const nextMeetings = meetings.map(m => {
+                if (m === meeting) {
+                    m.participants = m.participants.filter(u => u !== username);
+                }
+                return m;
+            });
+            setMeetings(nextMeetings);
+            setLoading(false);
+        }, 1000);
     }
 
     function handleEditMeeting(index, updatedMeeting) {
@@ -43,16 +56,18 @@ export default function MeetingsPage({username}) {
         setMeetings(nextMeetings);
     }
 
-
     return (
         <div>
             <h2>Zajęcia ({meetings.length})</h2>
             {
                 addingNewMeeting
-                    ? <NewMeetingForm onSubmit={(meeting) => handleNewMeeting(meeting)}/>
+                    ? <NewMeetingForm onSubmit={handleNewMeeting} />
                     : <button onClick={() => setAddingNewMeeting(true)}>Dodaj nowe spotkanie</button>
             }
-            {meetings.length > 0 &&
+
+            {loading && <div className="loader"></div>}
+
+            {!loading && meetings.length > 0 &&
                 <MeetingsList
                     meetings={meetings}
                     username={username}
@@ -60,8 +75,7 @@ export default function MeetingsPage({username}) {
                     onSignIn={handleSignIn}
                     onSignOut={handleSignOut}
                     onEditSubmit={handleEditMeeting}
-                />
-            }
+                />}
         </div>
-    )
+    );
 }
