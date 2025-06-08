@@ -1,6 +1,20 @@
+import { useState } from "react";
 import MeetingButtons from "./MeetingButtons";
 
-export default function MeetingsList({ meetings, username, onDelete, onSignOut, onSignIn }) {
+export default function MeetingsList({ meetings, username, onDelete, onSignOut, onSignIn, onEditSubmit }) {
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [editedMeeting, setEditedMeeting] = useState(null);
+
+    const handleEditClick = (meeting, index) => {
+        setEditingIndex(index);
+        setEditedMeeting({ ...meeting });
+    };
+
+    const handleSave = () => {
+        onEditSubmit(editingIndex, editedMeeting);
+        setEditingIndex(null);
+    };
+
     return (
         <table>
             <thead>
@@ -16,8 +30,22 @@ export default function MeetingsList({ meetings, username, onDelete, onSignOut, 
             {
                 meetings.map((meeting, index) => (
                     <tr key={index}>
-                        <td>{meeting.title}</td>
-                        <td>{meeting.description}</td>
+                        <td>
+                            {
+                                editingIndex === index
+                                    ? <input value={editedMeeting.title}
+                                             onChange={(e) => setEditedMeeting({...editedMeeting, title: e.target.value})} />
+                                    : meeting.title
+                            }
+                        </td>
+                        <td>
+                            {
+                                editingIndex === index
+                                    ? <input value={editedMeeting.description}
+                                             onChange={(e) => setEditedMeeting({...editedMeeting, description: e.target.value})} />
+                                    : meeting.description
+                            }
+                        </td>
                         <td>{meeting.date}</td>
                         <td>
                             {
@@ -27,13 +55,26 @@ export default function MeetingsList({ meetings, username, onDelete, onSignOut, 
                             }
                         </td>
                         <td>
-                            <MeetingButtons
-                                meeting={meeting}
-                                username={username}
-                                onDelete={() => onDelete(meeting)}
-                                onSignIn={() => onSignIn(meeting)}
-                                onSignOut={() => onSignOut(meeting)}
-                            />
+                            {
+                                editingIndex === index ? (
+                                    <>
+                                        <>
+                                            <button onClick={handleSave} className="meeting-button">Zapisz</button>
+                                            <button onClick={() => setEditingIndex(null)}>Anuluj</button>
+                                        </>
+
+                                    </>
+                                ) : (
+                                    <MeetingButtons
+                                        meeting={meeting}
+                                        username={username}
+                                        onDelete={() => onDelete(meeting)}
+                                        onSignIn={() => onSignIn(meeting)}
+                                        onSignOut={() => onSignOut(meeting)}
+                                        onEdit={() => handleEditClick(meeting, index)}
+                                    />
+                                )
+                            }
                         </td>
                     </tr>
                 ))

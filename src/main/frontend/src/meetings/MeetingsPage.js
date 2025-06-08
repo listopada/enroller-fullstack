@@ -37,6 +37,13 @@ export default function MeetingsPage({username}) {
         setMeetings(nextMeetings);
     }
 
+    function handleEditMeeting(index, updatedMeeting) {
+        const nextMeetings = [...meetings];
+        nextMeetings[index] = { ...nextMeetings[index], ...updatedMeeting };
+        setMeetings(nextMeetings);
+    }
+
+
     return (
         <div>
             <h2>Zajęcia ({meetings.length})</h2>
@@ -46,10 +53,15 @@ export default function MeetingsPage({username}) {
                     : <button onClick={() => setAddingNewMeeting(true)}>Dodaj nowe spotkanie</button>
             }
             {meetings.length > 0 &&
-                <MeetingsList meetings={meetings} username={username}
-                              onDelete={handleDeleteMeeting}
-                              onSignIn={handleSignIn}
-                              onSignOut={handleSignOut}/>}
+                <MeetingsList
+                    meetings={meetings}
+                    username={username}
+                    onDelete={handleDeleteMeeting}
+                    onSignIn={handleSignIn}
+                    onSignOut={handleSignOut}
+                    onEditSubmit={handleEditMeeting}
+                />
+            }
         </div>
     )
 }
