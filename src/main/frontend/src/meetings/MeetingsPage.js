@@ -62,7 +62,8 @@ export default function MeetingsPage({ username }) {
             {
                 addingNewMeeting
                     ? <NewMeetingForm onSubmit={handleNewMeeting} />
-                    : <button onClick={() => setAddingNewMeeting(true)}>Dodaj nowe spotkanie</button>
+                    : <button onClick={() => setAddingNewMeeting(true)} className="button-animate">Dodaj nowe spotkanie</button>
+
             }
 
             {loading && <div className="loader"></div>}

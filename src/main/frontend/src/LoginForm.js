@@ -7,9 +7,13 @@ export default function LoginForm({ onLogin, buttonLabel }) {
         <div>
             <label>Zaloguj się e-mailem</label>
             <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <button type="button" onClick={() => onLogin(email)}>
+            <button
+                type="button"
+                onClick={() => onLogin(email)}
+                className="button-animate">
                 {buttonLabel || 'Wchodzę'}
             </button>
+
         </div>
     );
 }

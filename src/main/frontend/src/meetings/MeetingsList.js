@@ -62,8 +62,8 @@ export default function MeetingsList({ meetings, username, onDelete, onSignOut, 
                             {
                                 editingIndex === index ? (
                                     <>
-                                        <button onClick={handleSave} className="meeting-button">Zapisz</button>
-                                        <button onClick={() => setEditingIndex(null)}>Anuluj</button>
+                                        <button onClick={handleSave} className="meeting-button button-animate">Zapisz</button>
+                                        <button onClick={() => setEditingIndex(null)} className="button-animate">Anuluj</button>
                                     </>
                                 ) : (
                                     <MeetingButtons
@@ -77,6 +77,7 @@ export default function MeetingsList({ meetings, username, onDelete, onSignOut, 
                                 )
                             }
                         </td>
+
                     </tr>
                 ))
             }

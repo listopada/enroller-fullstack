@@ -5,10 +5,10 @@ export default function MeetingButtons({ username, meeting, onDelete, onSignOut,
     return <>
         {
             isAttending
-                ? <button onClick={onSignOut} className="meeting-button">Wypisz się</button>
-                : <button onClick={onSignIn} className="meeting-button">Zapisz się</button>
+                ? <button onClick={onSignOut} className="meeting-button button-animate">Wypisz się</button>
+                : <button onClick={onSignIn} className="meeting-button button-animate">Zapisz się</button>
         }
-        <button onClick={onEdit} className="meeting-button">Edytuj</button>
-        {isEmpty && <button onClick={onDelete} className="button-outline">Usuń spotkanie</button>}
+        <button onClick={onEdit} className="meeting-button button-animate">Edytuj</button>
+        {isEmpty && <button onClick={onDelete} className="button-outline button-animate">Usuń spotkanie</button>}
     </>;
 }

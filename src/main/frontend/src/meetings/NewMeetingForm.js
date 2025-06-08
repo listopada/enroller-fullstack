@@ -3,7 +3,7 @@ import { useState } from "react";
 export default function NewMeetingForm({ onSubmit }) {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [date, setDate] = useState('');  // nowy stan na datę
+    const [date, setDate] = useState('');
 
     function submit(event) {
         event.preventDefault();
@@ -30,7 +30,7 @@ export default function NewMeetingForm({ onSubmit }) {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
             />
-            <button>Dodaj</button>
+            <button className="button-animate">Dodaj</button>
         </form>
     );
 }
