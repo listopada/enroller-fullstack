@@ -14,7 +14,7 @@ import java.util.Map;
 
 @CrossOrigin(origins = {
         "http://localhost:3000",
-        "https://twoj-frontend.onrender.com"
+        "https://enroller-fullstack-30eq.onrender.com"
 })
 @RestController
 @RequestMapping("/api/meetings")
