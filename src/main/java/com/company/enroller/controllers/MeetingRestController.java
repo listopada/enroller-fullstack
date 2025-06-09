@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "https://twoj-frontend.onrender.com"
+})
 @RestController
 @RequestMapping("/api/meetings")
 public class MeetingRestController {
