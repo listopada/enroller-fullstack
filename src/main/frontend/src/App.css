@@ -78,5 +78,11 @@ td ul {
   list-style-position: inside;
 }
 
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin: 1em 0;
+}
+
 
 
