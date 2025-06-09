@@ -58,7 +58,7 @@ export default function MeetingsPage({ username }) {
 
     return (
         <div>
-            <h2>Zajęcia ({meetings.length})</h2>
+            <h2>Spotkania ({meetings.length})</h2>
             {
                 addingNewMeeting
                     ? <NewMeetingForm onSubmit={handleNewMeeting} />
