@@ -1,12 +1,32 @@
 import { useState } from "react";
 import NewMeetingForm from "./NewMeetingForm";
 import MeetingsList from "./MeetingsList";
+import { useEffect } from "react";
 
 export default function MeetingsPage({ username }) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setLoading(true);
+        fetch("http://localhost:8080/api/meetings")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Nie udało się pobrać spotkań.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                setMeetings(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                setError(err.message);
+                setLoading(false);
+            });
+    }, []);
 
     function handleNewMeeting(meeting) {
         setLoading(true);
@@ -64,23 +84,36 @@ export default function MeetingsPage({ username }) {
             return;
         }
 
-        setTimeout(() => {
-            const isError = Math.random() < 0.3;
-            if (isError) {
-                setError("Nie udało się dodać spotkania. Spróbuj ponownie.");
-                setLoading(false);
-                return;
-            }
-
-            const nextMeetings = [...meetings, {
-                ...meeting,
+        fetch("http://localhost:8080/api/meetings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
                 title,
                 description,
-            }];
-            setMeetings(nextMeetings);
-            setAddingNewMeeting(false);
-            setLoading(false);
-        }, 1000);
+                date,
+                participants: [] // opcjonalnie
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || "Błąd serwera przy dodawaniu spotkania.");
+                    });
+                }
+                return response.json();
+            })
+            .then(newMeeting => {
+                setMeetings([...meetings, newMeeting]);
+                setAddingNewMeeting(false);
+                setLoading(false);
+            })
+            .catch(err => {
+                setError(err.message);
+                setLoading(false);
+            });
+
     }
 
     function handleDeleteMeeting(meeting) {

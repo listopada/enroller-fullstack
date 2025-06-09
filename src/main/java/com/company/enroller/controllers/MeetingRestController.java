@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/meetings")
 public class MeetingRestController {
+
 
     @Autowired
     MeetingService meetingService;
