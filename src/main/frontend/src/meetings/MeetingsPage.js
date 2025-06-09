@@ -33,7 +33,7 @@ export default function MeetingsPage({ username }) {
         setError(null);
 
         if (!meeting.title || !meeting.description || !meeting.date) {
-            setError("Wszystkie pola (tytuł, opis, termin) są wymagane.");
+            setError("Wszystkie pola są wymagane.");
             setLoading(false);
             return;
         }
@@ -42,20 +42,20 @@ export default function MeetingsPage({ username }) {
         const description = meeting.description.trim();
         const date = meeting.date;
 
-        if (title.length < 5) {
-            setError("Tytuł spotkania musi mieć co najmniej 5 znaki.");
+        if (title.length < 6) {
+            setError("Tytuł spotkania musi mieć co najmniej 6 znaki.");
             setLoading(false);
             return;
         }
 
-        if (description.length < 10) {
-            setError("Opis spotkania musi mieć co najmniej 10 znaków.");
+        if (description.length < 15) {
+            setError("Opis spotkania musi mieć co najmniej 15 znaków.");
             setLoading(false);
             return;
         }
 
-        if (title.length > 50) {
-            setError("Tytuł spotkania jest za długi (maks. 50 znaków).");
+        if (title.length > 20) {
+            setError("Tytuł spotkania jest za długi (maks. 20 znaków).");
             setLoading(false);
             return;
         }
