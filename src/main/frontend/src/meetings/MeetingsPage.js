@@ -43,19 +43,19 @@ export default function MeetingsPage({ username }) {
         const date = meeting.date;
 
         if (title.length < 5) {
-            setError("Tytuł spotkania musi mieć co najmniej 3 znaki.");
+            setError("Tytuł spotkania musi mieć co najmniej 5 znaki.");
             setLoading(false);
             return;
         }
 
         if (description.length < 10) {
-            setError("Opis spotkania musi mieć co najmniej 5 znaków.");
+            setError("Opis spotkania musi mieć co najmniej 10 znaków.");
             setLoading(false);
             return;
         }
 
         if (title.length > 50) {
-            setError("Tytuł spotkania jest za długi (maks. 100 znaków).");
+            setError("Tytuł spotkania jest za długi (maks. 50 znaków).");
             setLoading(false);
             return;
         }
@@ -117,8 +117,21 @@ export default function MeetingsPage({ username }) {
     }
 
     function handleDeleteMeeting(meeting) {
-        const nextMeetings = meetings.filter(m => m !== meeting);
-        setMeetings(nextMeetings);
+        setLoading(true);
+        fetch(`http://localhost:8080/api/meetings/${meeting.id}`, {
+            method: "DELETE"
+        })
+            .then(response => {
+                if (response.status !== 204) throw new Error("Nie udało się usunąć spotkania.");
+                // Po usunięciu z backendu usuwamy z frontendu
+                const nextMeetings = meetings.filter(m => m.id !== meeting.id);
+                setMeetings(nextMeetings);
+                setLoading(false);
+            })
+            .catch(err => {
+                setError(err.message);
+                setLoading(false);
+            });
     }
 
     function handleSignIn(meeting) {
