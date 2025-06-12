@@ -163,9 +163,50 @@ export default function MeetingsPage({ username }) {
     }
 
     function handleEditMeeting(index, updatedMeeting) {
-        const nextMeetings = [...meetings];
-        nextMeetings[index] = { ...nextMeetings[index], ...updatedMeeting };
-        setMeetings(nextMeetings);
+        setLoading(true);
+        setError(null);
+
+        if (!updatedMeeting.title || !updatedMeeting.description || !updatedMeeting.date) {
+            setError("Wszystkie pola są wymagane.");
+            setLoading(false);
+            return;
+        }
+
+        const title = updatedMeeting.title.trim();
+        const description = updatedMeeting.description.trim();
+        const date = updatedMeeting.date;
+        const meetingId = meetings[index].id;
+
+        fetch(`http://localhost:8080/api/meetings/${meetingId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title,
+                description,
+                date,
+                participants: meetings[index].participants
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Błąd podczas aktualizacji spotkania.");
+                }
+                const nextMeetings = [...meetings];
+                nextMeetings[index] = {
+                    ...meetings[index],
+                    title,
+                    description,
+                    date
+                };
+                setMeetings(nextMeetings);
+                setLoading(false);
+            })
+            .catch(err => {
+                setError(err.message);
+                setLoading(false);
+            });
     }
 
     return (
