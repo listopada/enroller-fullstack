@@ -6,43 +6,36 @@ import UserPanel from "./UserPanel";
 
 function App() {
     const [loggedIn, setLoggedIn] = useState('');
+    const [token, setToken] = useState('');
 
     useEffect(() => {
-        const savedLogin = localStorage.getItem("username");
-        if (savedLogin) {
+        const savedLogin = localStorage.getItem("userLogin");
+        const savedToken = localStorage.getItem("token");
+        if (savedLogin && savedToken) {
             setLoggedIn(savedLogin);
+            setToken(savedToken);
         }
     }, []);
 
-    async function ensureParticipantExists(email) {
-        const response = await fetch(`/api/participants/${email}`);
-        if (!response.ok) {
-            await fetch(`/api/participants`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ login: email })
-            });
-        }
-    }
-
-    async function login(email) {
-        if (email) {
-            await ensureParticipantExists(email);
-            setLoggedIn(email);
-            localStorage.setItem("username", email);
-        }
+    function login(loginData) {
+        setLoggedIn(loginData.login);
+        setToken(loginData.token);
+        localStorage.setItem("userLogin", loginData.login);
+        localStorage.setItem("token", loginData.token);
     }
 
     function logout() {
         setLoggedIn('');
-        localStorage.removeItem("username");
+        setToken('');
+        localStorage.removeItem("userLogin");
+        localStorage.removeItem("token");
     }
 
     return (
         <div className="container">
             <h1>System do zapisów na spotkania</h1>
             {loggedIn
-                ? <UserPanel username={loggedIn} onLogout={logout} />
+                ? <UserPanel username={loggedIn} token={token} onLogout={logout} />
                 : <LoginForm onLogin={login} />}
         </div>
     );

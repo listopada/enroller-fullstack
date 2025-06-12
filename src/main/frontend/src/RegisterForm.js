@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-export default function LoginForm({ onLogin }) {
-    const [isRegistering, setIsRegistering] = useState(false);
+export default function RegisterForm({ onClose }) {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -40,7 +39,7 @@ export default function LoginForm({ onLogin }) {
             newErrors.password = 'Hasło musi mieć minimum 6 znaków';
         }
 
-        if (isRegistering && formData.password !== formData.confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             newErrors.confirmPassword = 'Hasła nie są identyczne';
         }
 
@@ -55,11 +54,7 @@ export default function LoginForm({ onLogin }) {
 
         setLoading(true);
         try {
-            const endpoint = isRegistering
-                ? 'http://localhost:8080/api/participants/register'
-                : 'http://localhost:8080/api/participants/auth';
-
-            const response = await fetch(endpoint, {
+            const response = await fetch('http://localhost:8080/api/participants/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -71,21 +66,10 @@ export default function LoginForm({ onLogin }) {
             });
 
             if (!response.ok) {
-                throw new Error(isRegistering
-                    ? 'Użytkownik o tym adresie email już istnieje'
-                    : 'Nieprawidłowy email lub hasło');
+                throw new Error('Użytkownik o tym adresie email już istnieje');
             }
 
-            if (isRegistering) {
-                // Po udanej rejestracji przełączamy na formularz logowania
-                setIsRegistering(false);
-                setFormData(prev => ({ ...prev, confirmPassword: '' }));
-                setErrors({});
-            } else {
-                // Logowanie
-                const data = await response.json();
-                onLogin({ login: formData.email, token: data.token });
-            }
+            onClose();
         } catch (error) {
             setErrors(prev => ({
                 ...prev,
@@ -96,24 +80,14 @@ export default function LoginForm({ onLogin }) {
         }
     };
 
-    const toggleForm = () => {
-        setIsRegistering(!isRegistering);
-        setFormData({
-            email: '',
-            password: '',
-            confirmPassword: ''
-        });
-        setErrors({});
-    };
-
     return (
         <form onSubmit={handleSubmit} className="auth-form">
-            <h2>{isRegistering ? 'Zarejestruj się' : 'Zaloguj się'}</h2>
+            <h2>Zarejestruj się</h2>
             <div>
-                <label htmlFor="email">E-mail:</label>
+                <label htmlFor="register-email">E-mail:</label>
                 <input
                     type="email"
-                    id="email"
+                    id="register-email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
@@ -124,10 +98,10 @@ export default function LoginForm({ onLogin }) {
             </div>
 
             <div>
-                <label htmlFor="password">Hasło:</label>
+                <label htmlFor="register-password">Hasło:</label>
                 <input
                     type="password"
-                    id="password"
+                    id="register-password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
@@ -137,21 +111,19 @@ export default function LoginForm({ onLogin }) {
                 {errors.password && <div className="error-message">{errors.password}</div>}
             </div>
 
-            {isRegistering && (
-                <div>
-                    <label htmlFor="confirmPassword">Potwierdź hasło:</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        className={errors.confirmPassword ? 'error' : ''}
-                        disabled={loading}
-                    />
-                    {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
-                </div>
-            )}
+            <div>
+                <label htmlFor="confirm-password">Potwierdź hasło:</label>
+                <input
+                    type="password"
+                    id="confirm-password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className={errors.confirmPassword ? 'error' : ''}
+                    disabled={loading}
+                />
+                {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+            </div>
 
             {errors.submit && <div className="error-message">{errors.submit}</div>}
 
@@ -161,20 +133,15 @@ export default function LoginForm({ onLogin }) {
                     className="button-primary button-animate"
                     disabled={loading}
                 >
-                    {loading ? 'Proszę czekać...' : (isRegistering ? 'Zarejestruj się' : 'Zaloguj się')}
+                    {loading ? 'Rejestracja...' : 'Zarejestruj się'}
                 </button>
-            </div>
-
-            <div className="form-footer">
                 <button
                     type="button"
-                    className="button-clear button-animate"
-                    onClick={toggleForm}
+                    className="button-outline button-animate"
+                    onClick={onClose}
                     disabled={loading}
                 >
-                    {isRegistering
-                        ? 'Masz już konto? Zaloguj się'
-                        : 'Nie masz konta? Zarejestruj się'}
+                    Anuluj
                 </button>
             </div>
         </form>

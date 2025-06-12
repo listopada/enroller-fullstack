@@ -84,5 +84,52 @@ td ul {
   margin: 1em 0;
 }
 
+.auth-form {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.auth-form input.error {
+  border-color: #ff4444;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.button-group button {
+  flex: 1;
+}
+
+input:disabled {
+  background-color: #f4f4f4;
+  cursor: not-allowed;
+}
+
+.auth-form .form-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.auth-form .button-clear {
+  color: #606c76;
+  text-decoration: underline;
+}
+
+.auth-form .button-clear:hover {
+  color: #9b4dca;
+}
+
+.auth-form .button-group {
+  margin-top: 2rem;
+}
+
+.auth-form .button-group button {
+  width: 100%;
+}
+
 
 
