@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-//@CrossOrigin(origins = {
-//		"http://localhost:3000",
-//		"https://enroller-fullstack-30eq.onrender.com"
-//})
+@CrossOrigin(origins = {
+		"http://localhost:3000",
+		"https://enroller-fullstack-30eq.onrender.com"
+})
 @RestController
 @RequestMapping("/api/participants")
 public class ParticipantRestController {
