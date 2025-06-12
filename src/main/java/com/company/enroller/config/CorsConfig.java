@@ -13,18 +13,10 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-
-        // Zezwól na określone origins
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("https://enroller-fullstack-30eq.onrender.com");
-
-        // Zezwól na credentials (ciasteczka, nagłówki autoryzacji)
         config.setAllowCredentials(true);
-
-        // Zezwól na wszystkie headery
         config.addAllowedHeader("*");
-
-        // Zezwól na wszystkie metody HTTP
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");

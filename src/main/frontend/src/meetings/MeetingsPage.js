@@ -44,9 +44,8 @@ export default function MeetingsPage({ username }) {
         setLoading(true);
         setError(null);
 
-        // Walidacje pozostają bez zmian...
         if (!meeting.title || !meeting.description || !meeting.date) {
-            setError("Wszystkie pola są wymagane.");
+            setError("Wszystkie pola (tytuł, opis, termin) są wymagane.");
             setLoading(false);
             return;
         }
@@ -55,7 +54,47 @@ export default function MeetingsPage({ username }) {
         const description = meeting.description.trim();
         const date = meeting.date;
 
-        // Pozostałe walidacje bez zmian...
+        if (title.length < 5) {
+            setError("Tytuł spotkania musi mieć co najmniej 5 znaków.");
+            setLoading(false);
+            return;
+        }
+
+        if (description.length < 10) {
+            setError("Opis spotkania musi mieć co najmniej 10 znaków.");
+            setLoading(false);
+            return;
+        }
+
+        if (title.length > 50) {
+            setError("Tytuł spotkania jest za długi (maks. 50 znaków).");
+            setLoading(false);
+            return;
+        }
+
+        if (isNaN(Date.parse(date))) {
+            setError("Termin spotkania musi być poprawną datą.");
+            setLoading(false);
+            return;
+        }
+
+        const today = new Date().setHours(0, 0, 0, 0);
+        const meetingDate = new Date(date).setHours(0, 0, 0, 0);
+        if (meetingDate < today) {
+            setError("Termin spotkania nie może być w przeszłości.");
+            setLoading(false);
+            return;
+        }
+
+        const isDuplicate = meetings.some(m =>
+            m.title.trim().toLowerCase() === title.toLowerCase() &&
+            m.date === date
+        );
+        if (isDuplicate) {
+            setError("Spotkanie o tym tytule i dacie już istnieje.");
+            setLoading(false);
+            return;
+        }
 
         fetch("http://localhost:8080/api/meetings", {
             method: "POST",
@@ -84,6 +123,101 @@ export default function MeetingsPage({ username }) {
             .then(newMeeting => {
                 setMeetings([...meetings, newMeeting]);
                 setAddingNewMeeting(false);
+                setLoading(false);
+            })
+            .catch(err => {
+                setError(err.message);
+                setLoading(false);
+            });
+    }
+
+    function handleEditMeeting(index, updatedMeeting) {
+        setLoading(true);
+        setError(null);
+
+        if (!updatedMeeting.title || !updatedMeeting.description || !updatedMeeting.date) {
+            setError("Wszystkie pola (tytuł, opis, termin) są wymagane.");
+            setLoading(false);
+            return;
+        }
+
+        const title = updatedMeeting.title.trim();
+        const description = updatedMeeting.description.trim();
+        const date = updatedMeeting.date;
+
+        if (title.length < 5) {
+            setError("Tytuł spotkania musi mieć co najmniej 5 znaków.");
+            setLoading(false);
+            return;
+        }
+
+        if (description.length < 10) {
+            setError("Opis spotkania musi mieć co najmniej 10 znaków.");
+            setLoading(false);
+            return;
+        }
+
+        if (title.length > 50) {
+            setError("Tytuł spotkania jest za długi (maks. 50 znaków).");
+            setLoading(false);
+            return;
+        }
+
+        if (isNaN(Date.parse(date))) {
+            setError("Termin spotkania musi być poprawną datą.");
+            setLoading(false);
+            return;
+        }
+
+        const today = new Date().setHours(0, 0, 0, 0);
+        const meetingDate = new Date(date).setHours(0, 0, 0, 0);
+        if (meetingDate < today) {
+            setError("Termin spotkania nie może być w przeszłości.");
+            setLoading(false);
+            return;
+        }
+
+        const isDuplicate = meetings.some((m, i) =>
+            i !== index &&
+            m.title.trim().toLowerCase() === title.toLowerCase() &&
+            m.date === date
+        );
+
+        if (isDuplicate) {
+            setError("Spotkanie o tym tytule i dacie już istnieje.");
+            setLoading(false);
+            return;
+        }
+
+        const meetingId = meetings[index].id;
+        fetch(`http://localhost:8080/api/meetings/${meetingId}`, {
+            method: "PUT",
+            headers: authHeaders,
+            body: JSON.stringify({
+                title,
+                description,
+                date,
+                participants: meetings[index].participants
+            })
+        })
+            .then(response => {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userLogin');
+                    window.location.reload();
+                    throw new Error("Sesja wygasła. Zaloguj się ponownie.");
+                }
+                if (!response.ok) {
+                    throw new Error("Błąd podczas aktualizacji spotkania.");
+                }
+                const nextMeetings = [...meetings];
+                nextMeetings[index] = {
+                    ...meetings[index],
+                    title,
+                    description,
+                    date
+                };
+                setMeetings(nextMeetings);
                 setLoading(false);
             })
             .catch(err => {
@@ -180,54 +314,6 @@ export default function MeetingsPage({ username }) {
                     }
                     return m;
                 });
-                setMeetings(nextMeetings);
-                setLoading(false);
-            })
-            .catch(err => {
-                setError(err.message);
-                setLoading(false);
-            });
-    }
-
-    function handleEditMeeting(index, updatedMeeting) {
-        setLoading(true);
-        setError(null);
-
-        // Walidacje pozostają bez zmian...
-        if (!updatedMeeting.title || !updatedMeeting.description || !updatedMeeting.date) {
-            setError("Wszystkie pola są wymagane.");
-            setLoading(false);
-            return;
-        }
-
-        const meetingId = meetings[index].id;
-        fetch(`http://localhost:8080/api/meetings/${meetingId}`, {
-            method: "PUT",
-            headers: authHeaders,
-            body: JSON.stringify({
-                title: updatedMeeting.title.trim(),
-                description: updatedMeeting.description.trim(),
-                date: updatedMeeting.date,
-                participants: meetings[index].participants
-            })
-        })
-            .then(response => {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('userLogin');
-                    window.location.reload();
-                    throw new Error("Sesja wygasła. Zaloguj się ponownie.");
-                }
-                if (!response.ok) {
-                    throw new Error("Błąd podczas aktualizacji spotkania.");
-                }
-                const nextMeetings = [...meetings];
-                nextMeetings[index] = {
-                    ...meetings[index],
-                    title: updatedMeeting.title.trim(),
-                    description: updatedMeeting.description.trim(),
-                    date: updatedMeeting.date
-                };
                 setMeetings(nextMeetings);
                 setLoading(false);
             })

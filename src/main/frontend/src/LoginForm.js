@@ -77,12 +77,10 @@ export default function LoginForm({ onLogin }) {
             }
 
             if (isRegistering) {
-                // Po udanej rejestracji przełączamy na formularz logowania
                 setIsRegistering(false);
                 setFormData(prev => ({ ...prev, confirmPassword: '' }));
                 setErrors({});
             } else {
-                // Logowanie
                 const data = await response.json();
                 onLogin({ login: formData.email, token: data.token });
             }
