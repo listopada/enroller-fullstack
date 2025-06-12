@@ -14,8 +14,13 @@ export default function MeetingsPage({ username }) {
     };
 
     useEffect(() => {
+        const authHeaders = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        };
+
         setLoading(true);
-        fetch("http://localhost:8080/api/meetings", {
+        fetch("/api/meetings", {
             headers: authHeaders
         })
             .then(response => {
@@ -96,7 +101,7 @@ export default function MeetingsPage({ username }) {
             return;
         }
 
-        fetch("http://localhost:8080/api/meetings", {
+        fetch("/api/meetings", {
             method: "POST",
             headers: authHeaders,
             body: JSON.stringify({
@@ -190,7 +195,7 @@ export default function MeetingsPage({ username }) {
         }
 
         const meetingId = meetings[index].id;
-        fetch(`http://localhost:8080/api/meetings/${meetingId}`, {
+        fetch(`/api/meetings/${meetingId}`, {
             method: "PUT",
             headers: authHeaders,
             body: JSON.stringify({
@@ -228,7 +233,7 @@ export default function MeetingsPage({ username }) {
 
     function handleDeleteMeeting(meeting) {
         setLoading(true);
-        fetch(`http://localhost:8080/api/meetings/${meeting.id}`, {
+        fetch(`/api/meetings/${meeting.id}`, {
             method: "DELETE",
             headers: authHeaders
         })
@@ -252,7 +257,7 @@ export default function MeetingsPage({ username }) {
 
     function handleSignIn(meeting) {
         setLoading(true);
-        fetch(`http://localhost:8080/api/meetings/${meeting.id}/participants`, {
+        fetch(`/api/meetings/${meeting.id}/participants`, {
             method: "POST",
             headers: authHeaders,
             body: JSON.stringify({ login: username })
@@ -268,13 +273,14 @@ export default function MeetingsPage({ username }) {
                 return response.json();
             })
             .then(updatedParticipants => {
+                const participants = Array.isArray(updatedParticipants)
+                    ? updatedParticipants
+                        .filter(p => p != null) // usuwamy null i undefined
+                        .map(p => typeof p === 'object' ? p.login : p)
+                    : [typeof updatedParticipants === 'object' ? updatedParticipants.login : updatedParticipants];
+
                 const nextMeetings = meetings.map(m => {
                     if (m.id === meeting.id) {
-                        // Transformujemy dane uczestników na same loginy
-                        const participants = Array.isArray(updatedParticipants)
-                            ? updatedParticipants.map(p => typeof p === 'object' ? p.login : p)
-                            : [typeof updatedParticipants === 'object' ? updatedParticipants.login : updatedParticipants];
-
                         return {
                             ...m,
                             participants
@@ -285,15 +291,11 @@ export default function MeetingsPage({ username }) {
                 setMeetings(nextMeetings);
                 setLoading(false);
             })
-            .catch(err => {
-                setError(err.message);
-                setLoading(false);
-            });
     }
 
     function handleSignOut(meeting) {
         setLoading(true);
-        fetch(`http://localhost:8080/api/meetings/${meeting.id}/participants/${username}`, {
+        fetch(`/api/meetings/${meeting.id}/participants/${username}`, {
             method: "DELETE",
             headers: authHeaders
         })

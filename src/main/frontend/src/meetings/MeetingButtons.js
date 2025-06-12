@@ -1,7 +1,9 @@
 function MeetingButtons({ meeting, username, onDelete, onSignIn, onSignOut, onEdit }) {
-    const isParticipant = meeting.participants.some(p =>
-        (typeof p === 'object' ? p.login === username : p === username)
-    );
+    const isParticipant = Array.isArray(meeting.participants) && meeting.participants.some(p => {
+        if (!p) return false;
+        if (typeof p === 'object') return p.login === username;
+        return p === username;
+    });
 
     return (
         <div className="meeting-buttons">
