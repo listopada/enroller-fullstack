@@ -56,8 +56,8 @@ export default function LoginForm({ onLogin }) {
         setLoading(true);
         try {
             const endpoint = isRegistering
-                ? 'http://localhost:8080/api/participants/register'
-                : 'http://localhost:8080/api/participants/auth';
+                ? '/api/participants/register'
+                : '/api/participants/auth';
 
             const response = await fetch(endpoint, {
                 method: 'POST',
