@@ -20,9 +20,11 @@ function MeetingButtons({ meeting, username, onDelete, onSignIn, onSignOut, onEd
             <button onClick={onEdit} className="meeting-button button-animate">
                 Edytuj
             </button>
-            <button onClick={onDelete} className="meeting-button button-animate">
-                Usuń
-            </button>
+            {!isParticipant && (
+                <button onClick={onDelete} className="meeting-button button-animate">
+                    Usuń
+                </button>
+            )}
         </div>
     );
 }
